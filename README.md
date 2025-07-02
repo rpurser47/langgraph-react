@@ -2,6 +2,7 @@
 
 I'm learning to use [LangGraph](https://www.langchain.com/langgraph) by taking a [Udemy class](https://www.udemy.com/course/langgraph)
 
+Using the Reason-Act pattern
 <!-- Agent architecture using CRAG built with LangGraph that does [Corrective Retrieval-Augmented Generation (RAG)](https://medium.com/@sahin.samia/crag-corrective-retrieval-augmented-generation-in-llm-what-it-is-and-how-it-works-ce24db3343a7) with RAG from blog posts from [https://lilianweng.github.io/posts](https://lilianweng.github.io/posts). The results are scored for relevance to the question, and then augmented with a web search, if not enough information is found.  Then, these results are used to generate a response. -->
 
 
@@ -49,6 +50,21 @@ Agent memory is the component in an LLM-powered agent that stores and retrieves 
 ### LangGraph Graph
 
 ``` mermaid
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+        __start__(<p>__start__</p>)
+        agent_reason(agent_reason)
+        act(act)
+        __end__(<p>__end__</p>)
+        __start__ --> agent_reason;
+        agent_reason --> __end__;
+        classDef default fill:#f2f0ff,line-height:1.2
+        classDef first fill-opacity:0
+        classDef last fill:#bfb6fc
 ```
 
 ### Notes
