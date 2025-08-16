@@ -53,6 +53,9 @@ graph TD;
         classDef last fill:#bfb6fc
 ```
 
+## Example Trace on LangSmith
+https://smith.langchain.com/public/3dec531d-5177-4a16-b4e7-c659d5bbb5f3/r
+
 ## Notes
 Note that you'll need an `.env` file like this:
 
