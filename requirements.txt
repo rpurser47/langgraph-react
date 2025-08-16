@@ -5,3 +5,4 @@ langchain_tavily
 black
 isort
 python-dotenv
+rich
