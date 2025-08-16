@@ -41,7 +41,7 @@ if __name__ == "__main__":
         input = {
             "messages": [
                 HumanMessage(
-                    content="What is the weather in Tokyo? List it, and then triple the windspeed."
+                    content="What is the weather in Tokyo? List it, including the name of source of information, and then triple the windspeed."
                 )
             ]
         }
