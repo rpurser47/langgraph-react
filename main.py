@@ -2,6 +2,8 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
 from langgraph.graph import END, MessagesState, StateGraph
 from nodes import tool_node, run_agent_reasoning
+from rich.console import Console
+from rich.markdown import Markdown
 
 load_dotenv()
 
@@ -34,9 +36,10 @@ flow.add_edge(ACT, AGENT_REASON)
 app = flow.compile()
 
 if __name__ == "__main__":
-    print("Hello ReAct with LangGraph")
+    console = Console()
+    console.print(Markdown("# Hello ReAct with LangGraph"))
+    console.print(app.get_graph().draw_ascii())
     #print(app.get_graph().draw_mermaid())
-    print(app.get_graph().draw_ascii())
     result = app.invoke(
         input = {
             "messages": [
@@ -46,4 +49,4 @@ if __name__ == "__main__":
             ]
         }
     )
-    print(result["messages"][LAST].content)
+    console.print(Markdown(result["messages"][LAST].content))
