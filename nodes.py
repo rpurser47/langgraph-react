@@ -1,19 +1,19 @@
 from dotenv import load_dotenv
+from langgraph.graph import MessagesState
 from langgraph.prebuilt import ToolNode
-from react import react_agent_runnable, tools
-from state import AgentState
+
+from react import llm, tools
 
 load_dotenv()
 
-def run_agent_reasoning_engine(state: AgentState):
-    agent_outcome = react_agent_runnable.invoke(state)
-    return {"agent_outcome": agent_outcome}
+SYSTEM_MESSAGE = """
+You are a helpful assistant that can use tools to answer questions.
+"""
+def run_agent_reasoning(state: MessagesState) -> MessagesState:
+    response = llm.invoke(
+        [{"role": "system", "content": SYSTEM_MESSAGE}, *state["messages"]]
+    )
 
-tool_executor = ToolNode(tools)
+    return {"messages": [response]}
 
-def execute_tools(state: AgentState):
-    agent_action = state["agent_outcome"]
-    output = tool_executor.invoke(agent_action)
-    return {"intermediate_steps": [(agent_action, str(output))]}
-
-
+tool_node = ToolNode(tools)

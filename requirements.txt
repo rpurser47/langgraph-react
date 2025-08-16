@@ -1,7 +1,6 @@
 langchain
 langgraph
 langchain-openai
-langchainhub
 langchain_tavily
 black
 isort

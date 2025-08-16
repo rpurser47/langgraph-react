@@ -1,42 +1,49 @@
 from dotenv import load_dotenv
+from langchain_core.messages import HumanMessage
+from langgraph.graph import END, MessagesState, StateGraph
+from nodes import tool_node, run_agent_reasoning
+
 load_dotenv()
-
-from langchain_core.agents import AgentFinish
-from langgraph.graph import END, StateGraph
-
-from nodes import execute_tools, run_agent_reasoning_engine
-from state import AgentState
 
 AGENT_REASON = "agent_reason"
 ACT = "act"
+LAST = -1
 
-def should_continue(state: AgentState) -> str:
-    if isinstance(state["agent_outcome"], AgentFinish):
-        return END
-    else:
+def should_continue(state: dict) -> str:
+    latestMessage = state["messages"][LAST]
+    if latestMessage.tool_calls:
+        print("LLM called tool",
+              latestMessage.tool_calls[0]['name'],
+              "with arguments ",
+              latestMessage.tool_calls[0]['args'])
         return ACT
-    
-flow = StateGraph(AgentState)
+    return END
 
-flow.add_node(AGENT_REASON, run_agent_reasoning_engine)
+flow = StateGraph(MessagesState)
+
+flow.add_node(AGENT_REASON, run_agent_reasoning)
 flow.set_entry_point(AGENT_REASON)
-flow.add_node(ACT, execute_tools)
+flow.add_node(ACT, tool_node)
 
-flow.add_conditional_edges(
-    AGENT_REASON,
-    should_continue
-)
+flow.add_conditional_edges(AGENT_REASON, should_continue, {
+    END:END,
+    ACT:ACT})
 
 flow.add_edge(ACT, AGENT_REASON)
 
 app = flow.compile()
-print(app.get_graph().draw_mermaid())
 
 if __name__ == "__main__":
     print("Hello ReAct with LangGraph")
-    app.invoke(
+    #print(app.get_graph().draw_mermaid())
+    print(app.get_graph().draw_ascii())
+    result = app.invoke(
         input = {
-            "input": "What is the weather in San Francisco? Write it, and then triple it.",
+            "messages": [
+                HumanMessage(
+                    content="What is the weather in Tokyo? List it, and then triple the windspeed."
+                )
+            ]
         }
     )
-
+    print(result["messages"][LAST].content)
